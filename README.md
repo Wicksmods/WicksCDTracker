@@ -15,7 +15,7 @@ Part of the **[Wick suite](../WickSuite)** — three precision addons built arou
 
 ## Install
 
-- **CurseForge:** search for "Wick's CD Tracker".
+- **CurseForge:** [curseforge.com/wow/addons/wicks-cd-tracker](https://www.curseforge.com/wow/addons/wicks-cd-tracker)
 - **Manual:** drop the `WicksCDTracker` folder into `World of Warcraft\_classic_\Interface\AddOns\`.
 
 ## Usage
