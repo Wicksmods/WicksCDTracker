@@ -1,8 +1,10 @@
+<p align="center"><img src="images/wick-thumb-cd.png" alt="Wick's CD Tracker"></p>
+
 # Wick's CD Tracker
 
 > Live party and raid cooldown tracker. Kicks, saves, offensives, utility — all in one tight panel.
 
-Part of the **[Wick suite](../WickSuite)** — three precision addons built around a single fel-green-on-deep-purple aesthetic.
+Part of the **[Wick suite](https://github.com/jspliff/WickSuite)** — three precision addons built around a single fel-green-on-deep-purple aesthetic.
 
 ## Features
 
