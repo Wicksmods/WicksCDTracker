@@ -1,5 +1,13 @@
 # Wick's CD Tracker — Changelog
 
+## 0.3.0 — 2026-04-22
+
+### Close button, auto-sized backdrop, no more manual resize
+
+- **× close button** at the far top-right of the header (matches Wick's Trade Hall and Wick's TBC BIS Tracker). Settings cog now sits immediately to the left of the close button.
+- **Backdrop auto-sizes to the roster.** The frame now re-sizes itself on every refresh so the dark panel always covers every player row. Previously, rows rendered outside the backdrop when a full party was tracked and the frame hadn't been manually resized tall enough.
+- **Resize grip removed.** Since the frame sizes itself to the data, the BOTTOMRIGHT resize grip no longer earned its keep. The fel-green L-bracket at that corner remains as a decorative element. Saved `WCDTSettings.size` from older versions is safely ignored.
+
 ## 0.2.1 — 2026-04-21
 
 ### Brand identity pass
