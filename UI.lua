@@ -51,7 +51,10 @@ local function addBorder(f)
 end
 
 -- Fel-green L brackets flush at each frame corner (Wick brand).
--- The BOTTOMRIGHT bracket lives on the resize grip so it acts as the grabber.
+-- Pass a resizeButton to parent the BOTTOMRIGHT bracket to it (so the bracket
+-- doubles as a resize grabber). Pass nil (or omit) to parent all four
+-- brackets to the frame — CD Tracker now auto-sizes to its roster, so it
+-- omits the grip.
 local function addCornerAccents(parent, resizeButton)
     for _, point in ipairs({ "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT" }) do
         local host = (point == "BOTTOMRIGHT") and resizeButton or parent
@@ -73,12 +76,9 @@ local function ensureFrame()
     frame:SetSize(380, 200)
     frame:SetPoint("CENTER")
     frame:SetMovable(true)
-    frame:SetResizable(true)
-    if frame.SetResizeBounds then
-        frame:SetResizeBounds(MIN_W, MIN_H)
-    elseif frame.SetMinResize then
-        frame:SetMinResize(MIN_W, MIN_H)
-    end
+    -- Frame size is fully data-driven in UI:Refresh (width = widest row,
+    -- height = one row per tracked player). No user resize — closed the
+    -- loop on "rows spilling past the backdrop."
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", frame.StartMoving)
@@ -110,10 +110,23 @@ local function ensureFrame()
     title:SetPoint("LEFT", frame, "TOPLEFT", 10, -HEADER_H / 2)
     title:SetText("Wick's CD Tracker")
 
-    -- Settings cog in the header's top-right corner.
+    -- Close (×) button at far top-right of the header.
+    local closeBtn = CreateFrame("Button", nil, frame)
+    closeBtn:SetSize(HEADER_H - 4, HEADER_H - 4)
+    closeBtn:SetPoint("RIGHT", frame, "TOPRIGHT", -4, -HEADER_H / 2)
+    local closeText = closeBtn:CreateFontString(nil, "OVERLAY")
+    closeText:SetFont("Fonts\\FRIZQT__.TTF", 14, "")
+    closeText:SetTextColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1)
+    closeText:SetPoint("CENTER")
+    closeText:SetText("×")
+    closeBtn:SetScript("OnEnter", function() closeText:SetTextColor(unpack(C_GREEN)) end)
+    closeBtn:SetScript("OnLeave", function() closeText:SetTextColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1) end)
+    closeBtn:SetScript("OnClick", function() frame:Hide() end)
+
+    -- Settings cog sits immediately to the left of the close button.
     local cog = CreateFrame("Button", nil, frame)
     cog:SetSize(14, 14)
-    cog:SetPoint("RIGHT", frame, "TOPRIGHT", -6, -HEADER_H / 2)
+    cog:SetPoint("RIGHT", closeBtn, "LEFT", -4, 0)
     local cogTex = cog:CreateTexture(nil, "ARTWORK")
     cogTex:SetAllPoints()
     cogTex:SetTexture("Interface\\Buttons\\UI-OptionsButton")
@@ -122,29 +135,16 @@ local function ensureFrame()
     cog:SetScript("OnLeave", function() cogTex:SetVertexColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1) end)
     cog:SetScript("OnClick", function() if ns.Settings then ns.Settings:Toggle() end end)
 
-    local grip = CreateFrame("Button", nil, frame)
-    grip:SetSize(BRACKET + 2, BRACKET + 2)
-    grip:SetPoint("BOTTOMRIGHT", 0, 0)
-    grip:EnableMouse(true)
-    grip:SetScript("OnMouseDown", function(_, button)
-        if button == "LeftButton" then frame:StartSizing("BOTTOMRIGHT") end
-    end)
-    grip:SetScript("OnMouseUp", function()
-        frame:StopMovingOrSizing()
-        WCDTSettings = WCDTSettings or {}
-        WCDTSettings.size = { frame:GetWidth(), frame:GetHeight() }
-    end)
-
-    addCornerAccents(frame, grip)
+    -- All four L-brackets anchor to the frame itself (no resize grip anymore).
+    addCornerAccents(frame)
 
     if WCDTSettings and WCDTSettings.pos then
         local p, rp, x, y = unpack(WCDTSettings.pos)
         frame:ClearAllPoints()
         frame:SetPoint(p, UIParent, rp, x, y)
     end
-    if WCDTSettings and WCDTSettings.size then
-        frame:SetSize(unpack(WCDTSettings.size))
-    end
+    -- Intentionally ignore any legacy WCDTSettings.size — frame sizes itself
+    -- to the roster in UI:Refresh.
     return frame
 end
 
@@ -218,16 +218,13 @@ function UI:Refresh()
     end
     table.sort(list, function(a, b) return a.name < b.name end)
 
-    -- Enforce a minimum frame width that fits the widest row's icons. Frames
-    -- don't clip children, so without this the icons visually spill past the
-    -- backdrop on classes with many tracked CDs.
-    local needed = 16 + NAME_W + 4 + maxIcons * (ICON_SIZE + ICON_GAP)
-    if frame:GetWidth() < needed then frame:SetWidth(needed) end
-    if frame.SetResizeBounds then
-        frame:SetResizeBounds(needed, MIN_H)
-    elseif frame.SetMinResize then
-        frame:SetMinResize(needed, MIN_H)
-    end
+    -- Frame size is fully data-driven so the backdrop always covers every
+    -- row: width fits the widest row's icons, height fits one row per
+    -- tracked player plus the header. Frames don't clip children, so
+    -- without this, rows visually spill past the backdrop.
+    local neededW = 16 + NAME_W + 4 + maxIcons * (ICON_SIZE + ICON_GAP)
+    local neededH = ROW_TOP + #list * ROW_H + 4
+    frame:SetSize(math.max(MIN_W, neededW), math.max(MIN_H, neededH))
 
     local now = GetTime()
     for i, r in ipairs(list) do
