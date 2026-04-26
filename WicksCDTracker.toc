@@ -2,7 +2,7 @@
 ## Title: Wick's CD Tracker
 ## Notes: Live party/raid cooldown tracker. Kicks, saves, offensives, utility. Per-spell settings window with 'Interrupts only' mode.
 ## Author: Wick
-## Version: 0.3.0
+## Version: 0.3.1
 ## SavedVariables: WCDTSettings
 
 Core.lua

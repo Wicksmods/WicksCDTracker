@@ -1,5 +1,13 @@
 # Wick's CD Tracker — Changelog
 
+## 0.3.1 — 2026-04-25
+
+### Title bar harmonization
+
+Header now matches the canonical Wick suite spec — taller (32px), two-tone title (`Wick's` in fel-green, `CD Tracker` in cream, FRIZQT 14 outlined), bordered ✕ close button, fel-green underline at the bottom of the header, drag-by-header. The settings cog moved into the header right side, immediately to the left of the close button.
+
+No functional changes.
+
 ## 0.3.0 — 2026-04-22
 
 ### Close button, auto-sized backdrop, no more manual resize

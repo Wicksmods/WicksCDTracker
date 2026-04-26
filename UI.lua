@@ -12,9 +12,10 @@ local C_HEADER_BG   = { 0.090, 0.067, 0.141, 1 }
 local C_BORDER      = { 0.220, 0.188, 0.345, 1 }
 local C_GREEN       = { 0.310, 0.780, 0.471, 1 }
 local C_TEXT_NORMAL = { 0.831, 0.784, 0.631, 1 }
+local C_TEXT_DIM    = { 0.55, 0.52, 0.42, 1 }
 
 local BRACKET  = 10
-local HEADER_H = 22
+local HEADER_H = 32
 local MIN_W, MIN_H = 220, 60
 
 local ICON_SIZE = 22
@@ -94,39 +95,57 @@ local function ensureFrame()
     bg:SetAllPoints()
     addBorder(frame)
 
-    -- Header strip.
-    local header = newTex(frame, "ARTWORK", C_HEADER_BG)
-    header:SetPoint("TOPLEFT",  1,  -1)
-    header:SetPoint("TOPRIGHT", -1, -1)
+    -- ---- HEADER ----
+    local header = CreateFrame("Frame", nil, frame)
+    header:SetPoint("TOPLEFT", frame, "TOPLEFT", 1, -1)
+    header:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -1, -1)
     header:SetHeight(HEADER_H)
-    local headerSep = newTex(frame, "ARTWORK", C_BORDER)
-    headerSep:SetPoint("TOPLEFT",  1, -HEADER_H - 1)
-    headerSep:SetPoint("TOPRIGHT", -1, -HEADER_H - 1)
-    headerSep:SetHeight(1)
 
-    local title = frame:CreateFontString(nil, "OVERLAY")
-    title:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
-    title:SetTextColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1)
-    title:SetPoint("LEFT", frame, "TOPLEFT", 10, -HEADER_H / 2)
-    title:SetText("Wick's CD Tracker")
+    local headerBG = newTex(header, "BACKGROUND", C_HEADER_BG)
+    headerBG:SetAllPoints()
 
-    -- Close (×) button at far top-right of the header.
-    local closeBtn = CreateFrame("Button", nil, frame)
-    closeBtn:SetSize(HEADER_H - 4, HEADER_H - 4)
-    closeBtn:SetPoint("RIGHT", frame, "TOPRIGHT", -4, -HEADER_H / 2)
+    -- Green underline on header
+    local headerLine = newTex(header, "BORDER")
+    headerLine:SetColorTexture(C_GREEN[1], C_GREEN[2], C_GREEN[3], 0.35)
+    headerLine:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 40, 0)
+    headerLine:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", -40, 0)
+    headerLine:SetHeight(1)
+
+    -- Header bottom border
+    local headerBotBorder = newTex(header, "BORDER", C_BORDER)
+    headerBotBorder:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 0, 0)
+    headerBotBorder:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, 0)
+    headerBotBorder:SetHeight(1)
+
+    local title = header:CreateFontString(nil, "OVERLAY")
+    title:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
+    title:SetText("|cff4FC778Wick's|r |cffD4C8A1CD Tracker|r")
+    title:SetPoint("LEFT", header, "LEFT", 12, 0)
+
+    -- Close (✕) button at far top-right of the header.
+    local closeBtn = CreateFrame("Button", nil, header)
+    closeBtn:SetSize(16, 16)
+    closeBtn:SetPoint("RIGHT", header, "RIGHT", -8, 0)
+
+    local closeBG = newTex(closeBtn, "BACKGROUND", C_HEADER_BG)
+    closeBG:SetAllPoints()
+    addBorder(closeBtn)
+
     local closeText = closeBtn:CreateFontString(nil, "OVERLAY")
-    closeText:SetFont("Fonts\\FRIZQT__.TTF", 14, "")
-    closeText:SetTextColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1)
-    closeText:SetPoint("CENTER")
-    closeText:SetText("×")
-    closeBtn:SetScript("OnEnter", function() closeText:SetTextColor(unpack(C_GREEN)) end)
-    closeBtn:SetScript("OnLeave", function() closeText:SetTextColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1) end)
+    closeText:SetFont("Fonts\\FRIZQT__.TTF", 9, "")
+    closeText:SetText("✕")
+    closeText:SetTextColor(C_TEXT_DIM[1], C_TEXT_DIM[2], C_TEXT_DIM[3], 1)
+    closeText:SetAllPoints()
+    closeText:SetJustifyH("CENTER")
+    closeText:SetJustifyV("MIDDLE")
+    closeBtn:SetScript("OnEnter", function() closeText:SetTextColor(1, 0.3, 0.3, 1) end)
+    closeBtn:SetScript("OnLeave", function() closeText:SetTextColor(C_TEXT_DIM[1], C_TEXT_DIM[2], C_TEXT_DIM[3], 1) end)
     closeBtn:SetScript("OnClick", function() frame:Hide() end)
 
-    -- Settings cog sits immediately to the left of the close button.
-    local cog = CreateFrame("Button", nil, frame)
+    -- Settings cog sits to the left of the close button (12px gap).
+    local cog = CreateFrame("Button", nil, header)
     cog:SetSize(14, 14)
-    cog:SetPoint("RIGHT", closeBtn, "LEFT", -4, 0)
+    cog:SetPoint("RIGHT", closeBtn, "LEFT", -12, 0)
     local cogTex = cog:CreateTexture(nil, "ARTWORK")
     cogTex:SetAllPoints()
     cogTex:SetTexture("Interface\\Buttons\\UI-OptionsButton")
@@ -134,6 +153,17 @@ local function ensureFrame()
     cog:SetScript("OnEnter", function() cogTex:SetVertexColor(unpack(C_GREEN)) end)
     cog:SetScript("OnLeave", function() cogTex:SetVertexColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1) end)
     cog:SetScript("OnClick", function() if ns.Settings then ns.Settings:Toggle() end end)
+
+    -- Make header draggable too
+    header:EnableMouse(true)
+    header:RegisterForDrag("LeftButton")
+    header:SetScript("OnDragStart", function() frame:StartMoving() end)
+    header:SetScript("OnDragStop", function()
+        frame:StopMovingOrSizing()
+        local p, _, rp, x, y = frame:GetPoint()
+        WCDTSettings = WCDTSettings or {}
+        WCDTSettings.pos = { p, rp, x, y }
+    end)
 
     -- All four L-brackets anchor to the frame itself (no resize grip anymore).
     addCornerAccents(frame)
