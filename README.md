@@ -4,7 +4,7 @@
 
 > Live party and raid cooldown tracker. Kicks, saves, offensives, utility — all in one tight panel.
 
-Part of the **[Wick suite](https://github.com/Wicksmods/WickSuite)**: seven precision addons built around a single fel-green-on-deep-purple aesthetic.
+Part of the **[Wick suite](https://github.com/Wicksmods/WickSuite)**: precision addons built around a single fel-green-on-deep-purple aesthetic.
 
 <!-- wick:suite-table:start -->
 | Addon | GitHub | CurseForge |
