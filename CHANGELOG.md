@@ -1,6 +1,6 @@
 # Wick's CD Tracker — Changelog
 
-## 0.3.2 — 2026-04-26
+## 0.3.2 - 2026-04-26
 
 ### Title bar slim revert + close-button glyph fix
 
@@ -10,7 +10,7 @@ Also: the previous `✕` (U+2715) close glyph was rendering as a tofu/missing-gl
 
 No functional changes.
 
-## 0.3.1 — 2026-04-25
+## 0.3.1 - 2026-04-25
 
 ### Title bar harmonization
 
@@ -18,7 +18,7 @@ Header now matches the canonical Wick suite spec — taller (32px), two-tone tit
 
 No functional changes.
 
-## 0.3.0 — 2026-04-22
+## 0.3.0 - 2026-04-22
 
 ### Close button, auto-sized backdrop, no more manual resize
 
@@ -26,7 +26,7 @@ No functional changes.
 - **Backdrop auto-sizes to the roster.** The frame now re-sizes itself on every refresh so the dark panel always covers every player row. Previously, rows rendered outside the backdrop when a full party was tracked and the frame hadn't been manually resized tall enough.
 - **Resize grip removed.** Since the frame sizes itself to the data, the BOTTOMRIGHT resize grip no longer earned its keep. The fel-green L-bracket at that corner remains as a decorative element. Saved `WCDTSettings.size` from older versions is safely ignored.
 
-## 0.2.1 — 2026-04-21
+## 0.2.1 - 2026-04-21
 
 ### Brand identity pass
 
