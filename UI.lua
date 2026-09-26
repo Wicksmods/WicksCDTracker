@@ -82,9 +82,13 @@ local function ensureFrame()
     -- loop on "rows spilling past the backdrop."
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
+    frame:SetScript("OnDragStart", function(self)
+        WicksSnap.Detach("cdt_frame")
+        self:StartMoving()
+    end)
     frame:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
+        WicksSnap.TrySnap("cdt_frame")
         local p, _, rp, x, y = self:GetPoint()
         WCDTSettings = WCDTSettings or {}
         WCDTSettings.pos = { p, rp, x, y }
@@ -127,7 +131,7 @@ local function ensureFrame()
     closeText:SetJustifyV("MIDDLE")
     closeBtn:SetScript("OnEnter", function() closeText:SetTextColor(C_GREEN[1], C_GREEN[2], C_GREEN[3], 1) end)
     closeBtn:SetScript("OnLeave", function() closeText:SetTextColor(C_TEXT_NORMAL[1], C_TEXT_NORMAL[2], C_TEXT_NORMAL[3], 1) end)
-    closeBtn:SetScript("OnClick", function() frame:Hide() end)
+    closeBtn:SetScript("OnClick", function() UI:Toggle() end)
 
     -- Settings cog sits to the left of the close button (12px gap).
     local cog = CreateFrame("Button", nil, frame)
@@ -151,6 +155,11 @@ local function ensureFrame()
     end
     -- Intentionally ignore any legacy WCDTSettings.size — frame sizes itself
     -- to the roster in UI:Refresh.
+    WicksSnap.Register("cdt_frame", frame)
+    -- Restore saved visibility. Default is shown (visible == nil means first run).
+    if WCDTSettings and WCDTSettings.visible == false then
+        frame:Hide()
+    end
     return frame
 end
 
@@ -291,8 +300,12 @@ function UI:Toggle()
     ensureFrame()
     if frame:IsShown() then
         frame:Hide()
+        WCDTSettings = WCDTSettings or {}
+        WCDTSettings.visible = false
     else
         frame:Show()
+        WCDTSettings = WCDTSettings or {}
+        WCDTSettings.visible = nil  -- nil = default (shown)
         UI:Refresh()
     end
 end

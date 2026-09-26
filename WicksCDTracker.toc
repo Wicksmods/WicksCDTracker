@@ -7,4 +7,5 @@
 
 Core.lua
 Settings.lua
+WicksSnap.lua
 UI.lua
