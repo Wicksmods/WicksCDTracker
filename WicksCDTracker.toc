@@ -1,8 +1,8 @@
-## Interface: 20505
+## Interface: 20505, 20506
 ## Title: Wick's CD Tracker
 ## Notes: Live party/raid cooldown tracker. Kicks, saves, offensives, utility. Per-spell settings window with 'Interrupts only' mode.
 ## Author: Wick
-## Version: 0.3.2
+## Version: 0.3.3
 ## SavedVariables: WCDTSettings
 
 Core.lua

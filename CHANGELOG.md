@@ -1,5 +1,12 @@
 # Wick's CD Tracker — Changelog
 
+## 0.3.3 - 2026-10-01
+
+### Fixed
+
+- Loads on the 2.5.6 client without being marked out of date. The addon
+  now lists interface 20506 alongside 20505.
+
 ## 0.3.2 - 2026-04-26
 
 ### Title bar slim revert + close-button glyph fix
